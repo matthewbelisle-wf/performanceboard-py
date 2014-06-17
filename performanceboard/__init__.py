@@ -1,7 +1,6 @@
 from collections import defaultdict
 from importlib import import_module
 from time import time
-import atexit
 import logging
 import json
 import os
@@ -45,4 +44,4 @@ class Metric(object):
         self.data['end'] = time()
 
     def post(self):
-        atexit.register(requests.post, self.api, data=json.dumps([self.data]))
+        requests.post(self.api, data=json.dumps([self.data]))
