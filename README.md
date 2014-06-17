@@ -15,15 +15,14 @@ Simple Usage
 
 Create a board if you don't have your own.
 
-```
-$ curl -X POST http://performanceboard-public.appspot.com/api/
-http://performanceboard-public.appspot.com/api/ahlzfnBlcmZvcm1hbmNlYm9hcmQtcHVibGljchILEgVCb2FyZBiAgICA-JaVCQw
-```
+* Go to http://performanceboard-public.appspot.com/
+* Click `+ New Board`
 
-Export this global config to start posting things to PerformanceBoard.
+The API for the board will appear on the right side of the navbar.  Export this global config to
+start posting things to PerformanceBoard.
 
 ```
-$ export PERFORMANCEBOARD_URL=http://performanceboard-public.appspot.com/api/ahlzfnBlcmZvcm1hbmNlYm9hcmQtcHVibGljchILEgVCb2FyZBiAgICA-JaVCQw
+$ export PERFORMANCEBOARD_API=http://performanceboard-public.appspot.com/api/ahlzfnBlcmZvcm1hbmNlYm9hcmQtcHVibGljchILEgVCb2FyZBiAgICAmc6UCgw
 ```
 
 ```py
