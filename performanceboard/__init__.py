@@ -44,4 +44,4 @@ class Metric(object):
         self.data['end'] = time()
 
     def post(self):
-        requests.post(self.api, data=json.dumps([self.data]))
+        requests.post(self.api, data=json.dumps(self.data))
