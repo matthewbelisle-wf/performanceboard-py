@@ -1,4 +1,5 @@
 from unittest import TestCase
+import json
 
 from mock import patch
 from mock import Mock
@@ -13,27 +14,26 @@ class MetricTestCase(TestCase):
         Tests that post is called exactly once, even with nested metrics.
         """
         with patch('performanceboard.Metric.post') as post:
-            with performanceboard.Metric('foo', api='dummy_api') as metric:
-                with performanceboard.Metric('bar', api='dummy_api') as metric2:
+            with performanceboard.Metric('foo'):
+                with performanceboard.Metric('bar'):
                     pass
             self.assertEqual(post.call_count, 1)
 
-    def test_data(self):
+    def test_nesting(self):
         """
         Tests that metrics can be nested.
 
         https://github.com/mgbelisle/performanceboard#metrics
         """
-        key = 'foo'
-        key2 = 'bar'
-        with performanceboard.Metric(key) as metric:
-            with performanceboard.Metric(key2) as metric2:
-                data2 = metric2.data
-            data = metric.data
-        self.assertIn('key', data)
-        self.assertIn('start', data)
-        self.assertIn('end', data)
-        self.assertIn(data2, data['children'])
+        namespace = 'foo'
+        namespace2 = 'bar'
+        with patch('performanceboard.requests.post') as post:
+            with performanceboard.Metric(namespace):
+                with performanceboard.Metric(namespace2):
+                    pass
+                pass
+            posted = json.loads(post.call_args[1]['data'])
+        self.assertIn(namespace2, [m['namespace'] for m in posted['children']])
 
     def test_api(self):
         """
@@ -41,6 +41,8 @@ class MetricTestCase(TestCase):
         """
         api = 'dummy_api'
         with patch.dict('performanceboard.os.environ', {'PERFORMANCEBOARD_API': api}),\
-             performanceboard.Metric('foo') as metric:
-            api2 = metric.api
+             patch('performanceboard.requests.post') as post:
+            with performanceboard.Metric('foo'):
+                pass
+            api2 = post.call_args[0][0]
         self.assertEqual(api, api2)

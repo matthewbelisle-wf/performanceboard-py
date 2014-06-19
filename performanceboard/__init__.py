@@ -1,8 +1,7 @@
-from collections import defaultdict
+from datetime import datetime
 from importlib import import_module
-from time import time
-import logging
 import json
+import logging
 import os
 
 import requests
@@ -12,14 +11,15 @@ class Metric(object):
     """
     Context manager for a PerformanceBoard metric.  Metrics can be hierarchical.
     """
-    def __init__(self, key, api=None):
+    def __init__(self, namespace, api=None):
         self.api = api or os.environ.get('PERFORMANCEBOARD_API')
-        self.data = {'key': key}
+        self.meta = {}
+        self.data = {'namespace': namespace, 'meta': self.meta}
 
     def __enter__(self):
         self._stack.append(self)
         self.start_data()
-        return self
+        return self.meta
 
     def __exit__(self, exc_type, exc_value, traceback):
         self._stack.pop()
@@ -38,10 +38,10 @@ class Metric(object):
     _stack = []
 
     def start_data(self):
-        self.data['start'] = time()
+        self.data['start'] = datetime.utcnow().isoformat()
 
     def end_data(self):
-        self.data['end'] = time()
+        self.data['end'] = datetime.utcnow().isoformat()
 
     def post(self):
         requests.post(self.api, data=json.dumps(self.data))
