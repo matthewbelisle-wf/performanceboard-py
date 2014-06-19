@@ -28,7 +28,7 @@ class Metric(object):
             parent = self._stack[-1]
             parent.data['children'] = parent.data.get('children', [])
             parent.data['children'].append(self.data)
-        else:
+        elif self.api:
             self.post()
             logging.info('Posted to {}'.format(self.api))
 
@@ -38,10 +38,10 @@ class Metric(object):
     _stack = []
 
     def start_data(self):
-        self.data['start'] = datetime.utcnow().isoformat()
+        self.data['start'] = datetime.utcnow().isoformat() + 'Z'
 
     def end_data(self):
-        self.data['end'] = datetime.utcnow().isoformat()
+        self.data['end'] = datetime.utcnow().isoformat() + 'Z'
 
     def post(self):
         requests.post(self.api, data=json.dumps(self.data))
